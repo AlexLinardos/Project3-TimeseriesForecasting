@@ -11,10 +11,6 @@ import matplotlib.pyplot as plt
 
 forecast = ui.forecast_ui.Ui()
 
-print(forecast.dataset_path)
-print(forecast.ts_number)
-print(forecast.retrain)
-
 seed = 12345
 os.environ['PYTHONHASHSEED'] = str(seed)
 random.seed(seed)
