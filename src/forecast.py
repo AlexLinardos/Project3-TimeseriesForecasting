@@ -113,12 +113,10 @@ for plot_n in range(forecast.ts_number):
 
 plt.show()
 
-print("Press Enter to continue to the multi-time series model...")
+input("Press Enter to continue to the multi-time series model...")
 
 # MULTI-TIME SERIES MODEL
 model_name = 'final_model.h5' # file name of saved model (file must be of type .h5)
-
-df.sample(frac=1, random_state=1).reset_index(drop=True) # shuffle the dataframe
 
 # get only the numeric values
 column_names = df.columns.values.tolist()
@@ -154,7 +152,7 @@ for series in values:
 X_train, y_train = np.array(X_train), np.array(y_train)
 X_valid, y_valid = np.array(X_valid), np.array(y_valid)
 
-if forecast.retrain == False:
+if forecast.retrain == True:
     model = keras.models.Sequential([
     keras.layers.LSTM(50, return_sequences=True, input_shape=(window, 1)),
     keras.layers.Dropout(0.3),
@@ -167,12 +165,12 @@ if forecast.retrain == False:
 
     history = model.fit(X_train, y_train, epochs = 20, batch_size=2048, validation_data=(X_valid, y_valid))
 
-if forecast.retrain == False:
-    full_path = '../models/' + model_name
+if forecast.retrain == True:
+    full_path = './models/' + model_name
     model.save(full_path)
 
-if forecast.retrain == True:
-    full_path = '../models/' + model_name
+if forecast.retrain == False:
+    full_path = './models/' + model_name
     model = keras.models.load_model(full_path)
     model.summary()
 
