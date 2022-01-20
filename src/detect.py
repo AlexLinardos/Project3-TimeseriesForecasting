@@ -96,6 +96,7 @@ if detect.retrain == False:
 
 # MAKING PREDICTIONS AND FINDING ANOMALIES
 
+print("Making predictions. This may take some time...")
 X_train_pred = model.predict(X_train)
 train_mae_loss = np.mean(np.abs(X_train_pred - X_train), axis=1)
 
@@ -129,7 +130,7 @@ for index in plot_numbers:
     anomalies_dfs.append(score_df[score_df.anomaly==True])
 
 # plot
-figure, axis = plt.subplots(detect.ts_number, 1, figsize=(14,5))
+figure, axis = plt.subplots(detect.ts_number, 1, figsize=(12,7))
 for i in range(detect.ts_number):
     to_plot = scaler.inverse_transform(np.array(test_score_dfs[i]['price'])[:, np.newaxis])
     scores_np = test_score_dfs[i]['price'].values
@@ -146,10 +147,9 @@ for i in range(detect.ts_number):
             x=anomalies_dfs[i].index,
             y=scaler.inverse_transform(anomalies_np).squeeze(),
             color=sns.color_palette()[3],
-            s=50,
+            s=20,
             label='Anomaly'
         )
-    axis[i].xticks(rotation=25)
     axis[i].legend()
 
 plt.show()
