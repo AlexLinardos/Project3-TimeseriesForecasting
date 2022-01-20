@@ -151,7 +151,7 @@ for series in values:
 X_train, y_train = np.array(X_train), np.array(y_train)
 X_valid, y_valid = np.array(X_valid), np.array(y_valid)
 
-if forecast.retrain == False:
+if forecast.retrain == True:
     model = keras.models.Sequential([
     keras.layers.LSTM(50, return_sequences=True, input_shape=(window, 1)),
     keras.layers.Dropout(0.3),
@@ -164,11 +164,11 @@ if forecast.retrain == False:
 
     history = model.fit(X_train, y_train, epochs = 20, batch_size=2048, validation_data=(X_valid, y_valid))
 
-if forecast.retrain == False:
+if forecast.retrain == True:
     full_path = './models/' + model_name
     model.save(full_path)
 
-if forecast.retrain == True:
+if forecast.retrain == False:
     full_path = './models/' + model_name
     model = keras.models.load_model(full_path)
     model.summary()
