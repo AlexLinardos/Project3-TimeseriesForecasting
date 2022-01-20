@@ -41,7 +41,9 @@ Github repository: https://github.com/AlexLinardos/Project3-TimeseriesForecastin
 # Forecasting
 
 ## Running the program
-__As a .py__ : To run forecast.py execute the program from the command line while using the following format: `$python src/forecast.py -d <dataset> -n <number of time series selected>`
+__As a .py__ : To run forecast.py execute the program from the command line while using the following format: `$python src/forecast.py -d <dataset> -n <number of time series selected> --retrain <optional>`
+
+__WARNING!__ The --retrain parameter will cause the program to start the training of the model that fits on the entirety of the dataset from scratch (instead of just loading it) which may take *a lot* of time.
 
 _Example:_ `python3 src/forecast.py -d datasets/nasdaq2007_17.csv -n 3`
 
@@ -64,9 +66,11 @@ To prove that our models are not overfitting we plotted (in the forecast.ipynb n
 
 # Anomaly detection
 ## Running the program
-__As a .py__ : To run detect.py execute the program from the command line while using the following format: `$python src/detect.py -d <dataset> -n <number of time series selected> -mae <error values as double>`
+__As a .py__ : To run detect.py execute the program from the command line while using the following format: `$python src/detect.py -d <dataset> -n <number of time series selected> -mae <error values as double> --retrain <optional>`
 
 _Example:_ `python3 src/detect.py -d datasets/nasdaq2007_17.csv -n 3 -mae 0.32`
+
+__WARNING!__ The --retrain parameter will cause the program to start the training of the model from scratch (instead of just loading it) which may take *a lot* of time.
 
 For an indication about the values you could use for the -mae parameter you can take a look at the MAE graphs in the corresponding notebook.
 
