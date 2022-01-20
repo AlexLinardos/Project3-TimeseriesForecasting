@@ -105,7 +105,7 @@ for i in range(len(trained_models)):
     predictions.append(predicted_stock)
     realities.append(real_stock)
 
-figure, axis = plt.subplots(forecast.ts_number, 1, figsize=(14,5))
+figure, axis = plt.subplots(forecast.ts_number, 1, figsize=(12,6))
 
 for plot_n in range(forecast.ts_number):
     axis[plot_n].plot(realities[plot_n], label="Real values", linewidth=2)
@@ -152,6 +152,7 @@ X_train, y_train = np.array(X_train), np.array(y_train)
 X_valid, y_valid = np.array(X_valid), np.array(y_valid)
 
 if forecast.retrain == True:
+    print("Re-training multi-time series model. This will take a lot of time...")
     model = keras.models.Sequential([
     keras.layers.LSTM(50, return_sequences=True, input_shape=(window, 1)),
     keras.layers.Dropout(0.3),
@@ -190,11 +191,13 @@ for i in range(forecast.ts_number):
     plot_numbers.append(random.randint(0, len(df.index)))
 
 plt.figure(1)
-figure, axis = plt.subplots(forecast.ts_number, 1, figsize=(14,5))
+figure, axis = plt.subplots(forecast.ts_number, 1, figsize=(12,6))
 
+count = 0
 for plot_n in plot_numbers:
-    axis[plot_n].plot(realities[plot_n], label="Real values", linewidth=2)
-    axis[plot_n].plot(predictions[plot_n], label="Predicted values", linewidth=2)
-    axis[plot_n].legend()
+	axis[count].plot(real_series[plot_n], label="Real values", linewidth=2)
+	axis[count].plot(predicted_series[plot_n], label="Predicted values", linewidth=2)
+	axis[count].legend()
+	count+=1
 
 plt.show()
