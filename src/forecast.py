@@ -108,12 +108,9 @@ for i in range(len(trained_models)):
 figure, axis = plt.subplots(forecast.ts_number, 1, figsize=(14,5))
 
 for plot_n in range(forecast.ts_number):
-    axis[plot_n, 0].plot(realities[plot_n], label="Real values", linewidth=2)
-    axis[plot_n, 0].plot(predictions[plot_n], label="Predicted values", linewidth=2)
-
-plt.show()
-
-print("Press Enter to continue to the multi-time series model...")
+    axis[plot_n].plot(realities[plot_n], label="Real values", linewidth=2)
+    axis[plot_n].plot(predictions[plot_n], label="Predicted values", linewidth=2)
+    axis[plot_n].legend()
 
 # MULTI-TIME SERIES MODEL
 model_name = 'final_model.h5' # file name of saved model (file must be of type .h5)
@@ -168,11 +165,11 @@ if forecast.retrain == False:
     history = model.fit(X_train, y_train, epochs = 20, batch_size=2048, validation_data=(X_valid, y_valid))
 
 if forecast.retrain == False:
-    full_path = '../models/' + model_name
+    full_path = './models/' + model_name
     model.save(full_path)
 
 if forecast.retrain == True:
-    full_path = '../models/' + model_name
+    full_path = './models/' + model_name
     model = keras.models.load_model(full_path)
     model.summary()
 
@@ -192,10 +189,12 @@ plot_numbers = []
 for i in range(forecast.ts_number):
     plot_numbers.append(random.randint(0, len(df.index)))
 
+plt.figure(1)
 figure, axis = plt.subplots(forecast.ts_number, 1, figsize=(14,5))
 
 for plot_n in plot_numbers:
-    axis[plot_n, 0].plot(realities[plot_n], label="Real values", linewidth=2)
-    axis[plot_n, 0].plot(predictions[plot_n], label="Predicted values", linewidth=2)
+    axis[plot_n].plot(realities[plot_n], label="Real values", linewidth=2)
+    axis[plot_n].plot(predictions[plot_n], label="Predicted values", linewidth=2)
+    axis[plot_n].legend()
 
 plt.show()
