@@ -126,4 +126,6 @@ We avoid overfitting our models by using the following techniques:
 To prove that our models are not overfitting we plotted (in the reducer_training.ipynb notebook) the training and validation binary cross-entropy loss history. The results gave us the confirmation that our models indeed do not overfit.
 
 ## Performance comparisons
+__(PENDING...)__
+
 In order to examine how good our dimensionality reduction model trully did, we used its output to run the code of our previous project, which performs Nearest Neighbour searching and Clustering specifically for time series, using the specialized Frechet distance metric (for information consider visiting the repo at https://github.com/AlexLinardos/Project2-TimeSeries_Hashing_and_Searching). The results of our experiments are included in the "outputs" directory of the repository.
