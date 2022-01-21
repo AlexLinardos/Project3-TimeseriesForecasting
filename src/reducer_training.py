@@ -2,12 +2,12 @@ from enum import auto
 from keras.layers import Input, Dense, Conv1D, MaxPooling1D, UpSampling1D, BatchNormalization, LSTM, RepeatVector
 from keras.models import Model
 from keras import regularizers
-import time
+# import time
 import pandas as pd
 import os
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
-from tqdm import tqdm
+# from tqdm import tqdm
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import random
@@ -19,6 +19,7 @@ dataset = '/content/drive/My Drive/Colab Notebooks/Project3/nasdaq2007_17.csv'
 # the directory to which the model will be saved
 dir = 'models/'
 model_name = 'new_compressor.h5'
+model_name2 = 'reducer.h5'
 test_samples = 2000
 
 
@@ -126,6 +127,8 @@ decoded_stocks = autoencoder.predict(X_test)
 
 full_path = dir + model_name
 autoencoder.save(full_path)
+full_path = dir + model_name2
+encoder.save(full_path)
 
 x_test_deep = X_test.reshape((len(X_test), np.prod(X_test.shape[1:])))
 plot_examples(x_test_deep, decoded_stocks)
