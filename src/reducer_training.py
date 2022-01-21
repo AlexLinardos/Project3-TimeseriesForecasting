@@ -1,3 +1,4 @@
+from enum import auto
 from keras.layers import Input, Dense, Conv1D, MaxPooling1D, UpSampling1D, BatchNormalization, LSTM, RepeatVector
 from keras.models import Model
 from keras import regularizers
@@ -124,7 +125,7 @@ history = autoencoder.fit(X_train, X_train,
 decoded_stocks = autoencoder.predict(X_test)
 
 full_path = dir + model_name
-model.save(full_path)
+autoencoder.save(full_path)
 
 x_test_deep = X_test.reshape((len(X_test), np.prod(X_test.shape[1:])))
 plot_examples(x_test_deep, decoded_stocks)
