@@ -31,8 +31,8 @@ Github repository: https://github.com/AlexLinardos/Project3-TimeseriesForecastin
 * __notebooks/__
     * detect.ipynb -> Anomaly detection
     * forecast.ipynb -> Forecasting
-    * reduce.ipynb -> Performs dimensionality reduction
-    * reducer_training.ipynb -> Trains the model for dimensionality reduction
+    * reduce.ipynb -> Shows the results of the compression and decompression
+    * reducer_training.ipynb -> Trains the autoencoder model
 * __src/__
     * __ui/__ -> Contains modules used to implement the command line interfaces
         * detect_ui.py
