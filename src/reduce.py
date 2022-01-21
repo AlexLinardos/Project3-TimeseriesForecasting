@@ -38,7 +38,7 @@ output_queryset_file = reduce.output_query_file
 
 # the directory to which the model will be saved or from which it will be loaded
 dir = 'models/'
-model_name = 'compressor.h5'
+model_name = 'reducer.h5'
 
 # DATASET LOADING AND EDITING
 df = pd.read_csv(dataset, delimiter='\t', header=None)
@@ -97,10 +97,10 @@ X_test2, y_test2 = utils.create_dataset(test2, WINDOW, LAG)
 X_test2 = X_test2[:, :, np.newaxis]
 
 full_path = dir + model_name
-autoencoder = keras.models.load_model(full_path)
+encoder = keras.models.load_model(full_path)
 
-decoded_stocks = autoencoder.predict(X_test)
-decoded_stocks2 = autoencoder.predict(X_test2)
+decoded_stocks = encoder.predict(X_test)
+decoded_stocks2 = encoder.predict(X_test2)
 
 
 subseries_per_series = int(decoded_stocks.shape[0] / test.shape[1])

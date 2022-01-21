@@ -15,7 +15,7 @@ import tensorflow
 import utils
 
 # path to the dataset
-dataset = '/content/drive/My Drive/Colab Notebooks/Project3/nasdaq2007_17.csv'
+dataset = 'datasets/nasdaq2007_17.csv'
 # the directory to which the model will be saved
 dir = 'models/'
 model_name = 'new_compressor.h5'
