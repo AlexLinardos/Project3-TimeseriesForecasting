@@ -33,6 +33,7 @@ Github repository: https://github.com/AlexLinardos/Project3-TimeseriesForecastin
     * forecast.ipynb -> Forecasting
     * reduce.ipynb -> Shows the results of the compression and decompression
     * reducer_training.ipynb -> Trains the autoencoder model
+* __outputs/__ -> Contains the outputs of our dimensionality reducer
 * __src/__
     * __ui/__ -> Contains modules used to implement the command line interfaces
         * detect_ui.py
