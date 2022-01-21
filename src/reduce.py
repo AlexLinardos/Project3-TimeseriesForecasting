@@ -43,6 +43,9 @@ df2 = pd.read_csv(queryset, delimiter='\t', header=None)
 df.rename(columns = {0:'id'}, inplace=True) #rename the first column to "id"
 df2.rename(columns = {0:'id'}, inplace=True) #rename the first column to "id"
 
+ids = df['id'].values
+ids2 = df2['id'].values
+
 import random
 import tensorflow
 
@@ -55,12 +58,10 @@ def reproducibleResults(seed):
 reproducibleResults(12345)
 
 df.drop("id", axis=1, inplace=True)
-df.sample(frac=1, random_state=1).reset_index(drop=True)
 
 test = df
 
 df2.drop("id", axis=1, inplace=True)
-df2.sample(frac=1, random_state=1).reset_index(drop=True)
 
 test2 = df2
 
@@ -114,13 +115,43 @@ print(decoded_stocks.shape)
 subseries_per_series = int(decoded_stocks.shape[0] / test.shape[1])
 print(subseries_per_series)
 
-outcome = []
-
+concatenated_ts = []
 for i in range(test.shape[1]):
     index = i*subseries_per_series
     curr_ts = decoded_stocks[index]
     for j in range(1, subseries_per_series):
         curr_ts = np.concatenate([curr_ts, decoded_stocks[index+j]])
     # print(len(curr_ts))
-    outcome.append(curr_ts)
-print(len(outcome))
+    concatenated_ts.append(curr_ts)
+print(len(concatenated_ts))
+
+subseries_per_series2 = int(decoded_stocks2.shape[0] / test2.shape[1])
+print(subseries_per_series2)
+
+concatenated_ts2 = []
+for i in range(test2.shape[1]):
+    index = i*subseries_per_series2
+    curr_ts = decoded_stocks2[index]
+    for j in range(1, subseries_per_series2):
+        curr_ts = np.concatenate([curr_ts, decoded_stocks2[index+j]])
+    # print(len(curr_ts))
+    concatenated_ts2.append(curr_ts)
+print(len(concatenated_ts2))
+
+print(np.array(concatenated_ts).squeeze().shape)
+
+ids_df = pd.DataFrame(ids)
+concatenated_ts_df = pd.DataFrame(np.array(concatenated_ts).squeeze())
+output_df = pd.concat([ids_df, concatenated_ts_df], axis=1)
+output_df = output_df.transpose()
+output_df.reset_index(drop=True, inplace=True)
+output_df = output_df.transpose()
+output_csv = output_df.to_csv(output_dataset_file, index=False, header = False, sep ='\t', line_terminator = '\n')
+
+ids_df2 = pd.DataFrame(ids2)
+concatenated_ts_df2 = pd.DataFrame(np.array(concatenated_ts2).squeeze())
+output_df2 = pd.concat([ids_df2, concatenated_ts_df2], axis=1)
+output_df2 = output_df2.transpose()
+output_df2.reset_index(drop=True, inplace=True)
+output_df2 = output_df2.transpose()
+output_csv2 = output_df2.to_csv(output_queryset_file, index=False, header = False, sep ='\t', line_terminator = '\n')

@@ -89,3 +89,7 @@ We avoid overfitting our models by using the following techniques:
 To prove that our models are not overfitting we plotted (in the detect.ipynb notebook) the training and validation MSE history. The results gave us the confirmation that our models indeed do not overfit.
 
 # Dimensionality reduction
+## Running the program
+To run reduce.py execute the program from the command line while using the following format: 
+
+_Example:_ `python3 src/reduce.py -d datasets/nasdaq2007_17.csv -q datasets/nasdaq2007_17.csv -od enc_dataset.csv -oq enc_queryset.csv`
