@@ -1,8 +1,26 @@
 # reduce.py
+import tensorflow
+import random
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from sklearn.preprocessing import MinMaxScaler
+import numpy as np
+import pickle
+import pandas as pd
+import json
+import requests as req
+import time
+import datetime
+import keras
+from keras import regularizers
+from keras.models import model_from_json
+from keras.models import Model
+from keras.layers import Input, Dense, Conv1D, MaxPooling1D, UpSampling1D, BatchNormalization, LSTM, RepeatVector
 import sys
 import os
 
 import ui.reduce_ui
+import utils
 
 reduce = ui.reduce_ui.Ui()
 
@@ -11,51 +29,33 @@ print(reduce.queryset_path)
 print(reduce.output_dataset_file)
 print(reduce.output_query_file)
 
-dataset = reduce.dataset_path # path to the dataset
-queryset = reduce.queryset_path # path to the queryset
-output_dataset_file = reduce.output_dataset_file # path to the output_dataset_file
-output_queryset_file = reduce.output_query_file # path to the output_queryset_file
+dataset = reduce.dataset_path  # path to the dataset
+queryset = reduce.queryset_path  # path to the queryset
+# path to the output_dataset_file
+output_dataset_file = reduce.output_dataset_file
+# path to the output_queryset_file
+output_queryset_file = reduce.output_query_file
 
-dir = 'models/' # the directory to which the model will be save or from which it will be loaded
+# the directory to which the model will be saved or from which it will be loaded
+dir = 'models/'
 model_name = 'compressor.h5'
 
-from keras.layers import Input, Dense, Conv1D, MaxPooling1D, UpSampling1D, BatchNormalization, LSTM, RepeatVector
-from keras.models import Model
-from keras.models import model_from_json
-from keras import regularizers
-import keras
-import datetime
-import time
-import requests as req
-import json
-import pandas as pd
-import pickle
-import numpy as np
-from sklearn.preprocessing import MinMaxScaler
-# from tqdm import tqdm
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
-# %pylab inline
-
+# DATASET LOADING AND EDITING
 df = pd.read_csv(dataset, delimiter='\t', header=None)
 df2 = pd.read_csv(queryset, delimiter='\t', header=None)
 
-df.rename(columns = {0:'id'}, inplace=True) #rename the first column to "id"
-df2.rename(columns = {0:'id'}, inplace=True) #rename the first column to "id"
+df.rename(columns={0: 'id'}, inplace=True)  # rename the first column to "id"
+df2.rename(columns={0: 'id'}, inplace=True)  # rename the first column to "id"
 
 ids = df['id'].values
 ids2 = df2['id'].values
 
-import random
-import tensorflow
+seed = 12345
+os.environ['PYTHONHASHSEED'] = str(seed)
+random.seed(seed)
+tensorflow.random.set_seed(seed)
+np.random.seed(seed)
 
-def reproducibleResults(seed):
-    os.environ['PYTHONHASHSEED'] = str(seed)
-    random.seed(seed)
-    tensorflow.random.set_seed(seed)
-    np.random.seed(seed)
-
-reproducibleResults(12345)
 
 df.drop("id", axis=1, inplace=True)
 
@@ -68,39 +68,31 @@ test2 = df2
 test = test.transpose()
 test2 = test2.transpose()
 
-from sklearn.preprocessing import MinMaxScaler
-
+# SCALING
 scaler = MinMaxScaler(feature_range=(0, 1))
 
 for i in range(test.shape[1]):
     curr_ts = test[i].to_numpy()
-    curr_ts = curr_ts.reshape(-1,1)
+    curr_ts = curr_ts.reshape(-1, 1)
     test[i] = scaler.fit_transform(curr_ts)
 
 for i in range(test2.shape[1]):
     curr_ts = test2[i].to_numpy()
-    curr_ts = curr_ts.reshape(-1,1)
+    curr_ts = curr_ts.reshape(-1, 1)
     test2[i] = scaler.fit_transform(curr_ts)
 
-def create_dataset(X, time_steps=1, lag=1):
-    Xs, ys = [], []
-    for j in range(len(X.columns)):
-      for i in range(0, len(X) - time_steps, lag):
-          v = X[j].iloc[i:(i + time_steps)].values
-          Xs.append(v)
-          ys.append(X[j].iloc[i + time_steps])
-    return np.array(Xs), np.array(ys)
 
+# MAKING PREDICTIONS (aka reducing dimensionality of data)
 WINDOW = 50
 LAG = 10
 
 # reshape to (samples, window, n_features)
 
-X_test, y_test = create_dataset(test, WINDOW, LAG)
+X_test, y_test = utils.create_dataset(test, WINDOW, LAG)
 
 X_test = X_test[:, :, np.newaxis]
 
-X_test2, y_test2 = create_dataset(test2, WINDOW, LAG)
+X_test2, y_test2 = utils.create_dataset(test2, WINDOW, LAG)
 
 X_test2 = X_test2[:, :, np.newaxis]
 
@@ -110,10 +102,9 @@ autoencoder = keras.models.load_model(full_path)
 decoded_stocks = autoencoder.predict(X_test)
 decoded_stocks2 = autoencoder.predict(X_test2)
 
-print(decoded_stocks.shape)
 
 subseries_per_series = int(decoded_stocks.shape[0] / test.shape[1])
-print(subseries_per_series)
+
 
 concatenated_ts = []
 for i in range(test.shape[1]):
@@ -121,9 +112,7 @@ for i in range(test.shape[1]):
     curr_ts = decoded_stocks[index]
     for j in range(1, subseries_per_series):
         curr_ts = np.concatenate([curr_ts, decoded_stocks[index+j]])
-    # print(len(curr_ts))
     concatenated_ts.append(curr_ts)
-print(len(concatenated_ts))
 
 subseries_per_series2 = int(decoded_stocks2.shape[0] / test2.shape[1])
 print(subseries_per_series2)
@@ -134,11 +123,8 @@ for i in range(test2.shape[1]):
     curr_ts = decoded_stocks2[index]
     for j in range(1, subseries_per_series2):
         curr_ts = np.concatenate([curr_ts, decoded_stocks2[index+j]])
-    # print(len(curr_ts))
     concatenated_ts2.append(curr_ts)
-print(len(concatenated_ts2))
 
-print(np.array(concatenated_ts).squeeze().shape)
 
 ids_df = pd.DataFrame(ids)
 concatenated_ts_df = pd.DataFrame(np.array(concatenated_ts).squeeze())
@@ -146,7 +132,8 @@ output_df = pd.concat([ids_df, concatenated_ts_df], axis=1)
 output_df = output_df.transpose()
 output_df.reset_index(drop=True, inplace=True)
 output_df = output_df.transpose()
-output_csv = output_df.to_csv(output_dataset_file, index=False, header = False, sep ='\t', line_terminator = '\n')
+output_csv = output_df.to_csv(
+    output_dataset_file, index=False, header=False, sep='\t', line_terminator='\n')
 
 ids_df2 = pd.DataFrame(ids2)
 concatenated_ts_df2 = pd.DataFrame(np.array(concatenated_ts2).squeeze())
@@ -154,4 +141,5 @@ output_df2 = pd.concat([ids_df2, concatenated_ts_df2], axis=1)
 output_df2 = output_df2.transpose()
 output_df2.reset_index(drop=True, inplace=True)
 output_df2 = output_df2.transpose()
-output_csv2 = output_df2.to_csv(output_queryset_file, index=False, header = False, sep ='\t', line_terminator = '\n')
+output_csv2 = output_df2.to_csv(
+    output_queryset_file, index=False, header=False, sep='\t', line_terminator='\n')

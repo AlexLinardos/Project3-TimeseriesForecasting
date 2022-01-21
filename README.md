@@ -10,6 +10,7 @@ Github repository: https://github.com/AlexLinardos/Project3-TimeseriesForecastin
 
 ## Table of contents:
 * [Repository organisation](#repository-organisation)
+* [Dependencies](#dependencies)
 * [Forecasting](#forecasting)
 * [Anomaly detection](#anomaly-detection)
 * [Dimensionality reduction](#dimensionality-reduction)
@@ -37,6 +38,16 @@ Github repository: https://github.com/AlexLinardos/Project3-TimeseriesForecastin
     * forecast.py -> Forecasting
     * reduce.py -> Dimensionality reduction
     * utils.py -> Module that contains utility functions for general use
+
+# Dependencies
+To run our programs you will need Python 3.6 (or later) and the following modules:
+* pandas
+* numpy
+* tensorflow
+* sklearn
+* keras
+* matplotlib
+* seaborn
 
 # Forecasting
 
